@@ -68,6 +68,7 @@ Get the JavaScript Libraries
 curl https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js -o js/jquery.min.js
 curl https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js -o js/jquery-ui.min.js -o js/jquery-ui.min.js
 curl https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js -o js/jquery.mobile.min.js
+curl https://raw.githubusercontent.com/loebi-ch/jquery-clock-timepicker/master/jquery-clock-timepicker.min.js -o js/jquery-clock-timepicker.min.js
 curl https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css -o css/jquery-ui.css
 curl https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css -o css/jquery.mobile.min.css
 curl https://unpkg.com/purecss@2.0.5/build/pure-min.css -o css/pure-min.css
