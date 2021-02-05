@@ -2,6 +2,7 @@
 This traffic-light clock was designed to help my daughter understand when she can get out of bed in the morning.  It has a simple design and a customizable schedule that can be programmed in the web interface.  This clock uses Python3 to control the GPIO Pins on the Raspberry Pi Zero and also run the simple web server.  This guide will give you all the software, inluding the OpenSCAD 3D model for the case, to allow you to create one of your own.  Just supply the hardware, print the case, and load the software.
 
 ![Color Clock](/images/1.png)
+
 ![Color Clock Parts](/images/2.png)
 
 ## Hardware Needed
