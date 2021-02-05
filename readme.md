@@ -63,6 +63,17 @@ Install the required Python modules
 cd color_clock
 pip -r install requirements.txt
 ```
+Get the JavaScript Libraries
+```
+curl https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js -o js/jquery.min.js
+curl https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js -o js/jquery-ui.min.js -o js/jquery-ui.min.js
+curl https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js -o js/jquery.mobile.min.js
+curl https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css -o css/jquery-ui.css
+curl https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css -o css/jquery.mobile.min.css
+curl https://unpkg.com/purecss@2.0.5/build/pure-min.css -o css/pure-min.css
+
+```
+
 Schedule the program to run when the unit is rebooted:
 ```
 crontab -l > mycron && echo "@reboot /usr/bin/python3 /home/pi/color_clock/app.py 2>/dev/null" >> mycron && crontab mycron && rm mycron
