@@ -1,0 +1,102 @@
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+        <link rel="stylesheet" href="{{url_for('static', filename='js/jquery-ui.min.css')}}" />
+        <link rel="stylesheet" href="{{url_for('static', filename='js/jquery-ui.theme.min.css')}}" />
+        <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}" />
+        <link rel="stylesheet" href="{{url_for('static', filename='css/pure-min.css')}}" />
+        <script src="{{url_for('static', filename='js/external/jquery/jquery.js')}}"></script>
+        <script src="{{url_for('static', filename='js/jquery-ui.min.js')}}"></script>
+        <script src="{{url_for('static', filename='js/jquery-clock-timepicker.min.js')}}"></script>
+        <script type="text/javascript">
+            $( function() {
+	          $('.standard').clockTimePicker({precision:5});
+              $( "#tabs" ).tabs();
+
+              $("#checkbox-1").checkboxradio({icon: false});
+              $('#checkbox-1').on("change", function(event){
+                  if( $('#checkbox-1').prop("checked")){
+                      $("label[for='checkbox-1']").text("ON");
+                  }
+                  else
+                  {
+                      $("label[for='checkbox-1']").text("Off");
+                      $('#checkbox-1').prop("disabled", true);
+                      $('#normal').submit();
+                  }
+              });
+	        });
+        </script>
+    </head>
+    <body>
+        <div id="tabs" class="tabs" align=center>
+            <ul>
+                <li><a href="#tabs-1">Lights</a></li>
+                <li><a href="#tabs-2">Schedule</a></li>
+            </ul>
+            <div id="tabs-1" class="tabs2" align=center>
+                <p>
+                    <table id="tab_table" align=center>
+                        <tr><td>
+                            <table align=center>
+                                <tr>
+                                    <td class="red"><a href="/led?led=red"><img class="pure-img" src={{url_for('static', filename='img/' + light.red + '.png')}} /></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="yellow"><a href="/led?led=yellow"><img class="pure-img" src={{url_for('static', filename='img/' + light.yellow + '.png')}} /></a></td>
+                                </tr>
+                                <tr>
+                                    <td class="green"><a href="/led?led=green"><img class="pure-img" src={{url_for('static', filename='img/' + light.green + '.png')}} /></a></td>
+                                </tr>
+                            </table>
+                            <table align=center>
+                                <tr>
+                                    <td>
+                                        <form class="pure-form" id="normal" action="/normal" method="POST">
+                                        <table class="pure-table pure-table-bordered">
+                                            <tr>
+                                                <td>Temporary Override</td>
+                                                <td>
+                                        {% block content %}
+                                            {% if light.override %}
+                                                    <label for="checkbox-1">On</label>
+                                                    <input type="checkbox" name="checkbox-1" id="checkbox-1" checked>
+                                            {% else %}
+                                                    <label for="checkbox-1">Off</label>
+                                                    <input type="checkbox" name="checkbox-1" id="checkbox-1" disabled>
+                                            {% endif %}
+                                        {% endblock content %}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        </form>
+                                    </td>
+                                </tr>
+                        </table>
+                    </table>
+                </p>
+            </div>
+            <div id="tabs-2" class="tabs">
+                <p>
+                    <form class="pure-form" id="schedule" action="/schedule" method="POST">
+                        <table class="pure-table pure-table-bordered">
+                            <tr><td><p>Green on at </p></td><td><input id="green" name="green" class="time standard" type="text" value="{{ time.green }}" /></td></tr>
+                            <tr><td><p>Red on at </p></td><td><input id="red" name="red" class="time standard" type="text" value="{{ time.red }}" /></td></tr>
+                            <tr><td colspan=2><div class="widget" align="center"><input type="submit" value="save"></div></td></tr>
+                        </table>
+                    </form>
+              </p>
+            </div>
+      </div>
+      <br>
+      <table align=center>
+            <tr>
+                <td>
+                    <h3>{{ clock }}</h3>
+                </td>
+            </tr>
+      <table>
+    </body>
+</html>
+
