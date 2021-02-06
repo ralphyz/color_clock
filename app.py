@@ -156,7 +156,7 @@ def read_light_config():
     if data.get(green_start) is None:
         data[green_start] = def_green_start
 
-    if data[yellow_mode] == False:
+    if data.get(yellow_mode) == False:
         data[yellow_mode] = ''
     else:
         if data.get(yellow_mode) is None:
