@@ -1,5 +1,11 @@
 # Color Clock
-This traffic-light clock was designed to help my daughter understand when she can get out of bed in the morning.  It has a simple design and a customizable schedule that can be programmed in the web interface.  This clock uses Python3 to control the GPIO Pins on the Raspberry Pi Zero and also run the simple web server.  This guide will give you all the software, inluding the OpenSCAD 3D model for the case, to allow you to create one of your own.  Just supply the hardware, print the case, and load the software.
+This traffic-light clock was designed to help my daughter understand when she can get out of bed in the morning.  
+
+* Red - go back to bed
+* Yellow - almost time, play in your bed if you wish
+* Green - you can get up now
+
+It has a simple design and a customizable schedule that can be programmed from the web interface.  This clock uses Python3 to control the GPIO Pins on the Raspberry Pi Zero and also run the simple web server.  This guide will give you all the software, inluding the OpenSCAD 3D model for the case, to allow you to create one of your own.  Just supply the hardware, print the case, and load the software.
 
 ![Color Clock](/images/1.png)
 
@@ -10,10 +16,16 @@ This traffic-light clock was designed to help my daughter understand when she ca
 * Low Voltage Labs Traffic Light [https://amzn.to/2MVWmtl](https://amzn.to/2MVWmtl)
 
 ## Soldering
-You may be able to get by without soldering, but I soldered the wires onto my board.  I used GPIO spots GND/17/27/22
+You may be able to get by without soldering, but I soldered the wires onto my board.  I did not solder into the traffic light device. I used GPIO spots GND/17/27/22 and wires that are 40mm long. You can use 14/15/18/GND too, and not have to rotate the light 180 degrees. If you change GPIO pins, you must update the `app.py` file with the new locations:
+```
+# GPIO Numbers
+g_io = 17
+r_io = 27
+y_io = 22
+```
 
 ## Case and Assembly
-Once soldered, put the traffic lights onto the wires.  With the lights facing towards the USB/HDMI ports, insert the wires in sequence to the traffic light.  While slightly pushing down, twist the traffic light 180 degrees, facing away from the ports.  Place the PI Zero into the base of the case.  Fit the traffic light into the hole in the top part of the case, and then snap the top down onto the base.  Then, gently press the LEDs into the holes on the front.  Once it is securely in place, fit the back of the light tower on.
+Once soldered, put the traffic lights onto the wires.  With the lights facing towards the USB/HDMI ports, insert the wires, in sequence left to right, into the traffic light.  While slightly pushing down, twist the traffic light 180 degrees, facing away from the ports.  Next, place the PI Zero into the base of the case.  Fit the traffic light through the hole in the top/lid part of the case, and then snap the top/lid down onto the base.  Then, gently press the LEDs into the holes on the front.  Once it is securely in place, fit the back of the light tower into place to secure the traffic light in the tower.
 
 ## Getting the Pi ready for booting
 1. Download the latest image for your pi at [www.raspberrypi.org](https://www.raspberrypi.org/software/operating-systems/)
