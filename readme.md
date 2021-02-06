@@ -94,7 +94,7 @@ sudo reboot
 ```
 
 ## Web Server
-Once the pi reboots, you should be able to browse to the web server in any browser by typing in the IP Address.  From the page you will see, you can touch a LED to enable that color.  When a color is enabled and it is not the scheduled time for that color, the "Temporary Override" button will turn on.  You can click it off, or you can select a different LED.  
+Once the pi reboots, you should be able to browse to the web server in any browser by typing in the IP Address.  From the page that loads, you can touch a LED to enable that color.  When a color is enabled and it is not the scheduled time for that color, the "Temporary Override" button will turn on.  You can click it off, or you can select a different LED.  
 
 You may also select the Schedule Tab, and set the schedule for the light changes.
 
