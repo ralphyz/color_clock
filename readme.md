@@ -66,7 +66,7 @@ pip -r install requirements.txt
 Get the JavaScript Libraries
 ```
 curl -s https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js -o static/js/jquery.min.js
-curl -s https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js -o static/js/jquery-ui.min.js -o js/jquery-ui.min.js
+curl -s https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js -o js/jquery-ui.min.js
 curl -s https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js -o static/js/jquery.mobile.min.js
 curl -s https://raw.githubusercontent.com/loebi-ch/jquery-clock-timepicker/master/jquery-clock-timepicker.min.js -o static/js/jquery-clock-timepicker.min.js
 curl -s https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css -o static/css/jquery-ui.min.css
