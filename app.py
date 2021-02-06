@@ -240,7 +240,6 @@ def change_web_led():
 
         return redirect(url_for(index))
 
-
     # continue if the scheduled value was not submitted
 
     if new_led == red:
