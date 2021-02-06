@@ -70,7 +70,6 @@ curl -s https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.m
 curl -s https://raw.githubusercontent.com/loebi-ch/jquery-clock-timepicker/master/jquery-clock-timepicker.min.js -o static/js/jquery-clock-timepicker.min.js
 curl -s https://ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css -o static/css/jquery.mobile.min.css
 curl -s https://unpkg.com/purecss@2.0.5/build/pure-min.css -o static/css/pure-min.css
-
 ```
 
 Schedule the program to run when the unit is rebooted:
