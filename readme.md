@@ -11,18 +11,25 @@ It has a simple design and a customizable schedule that can be programmed from t
 
 ![Color Clock Parts](/images/2.png)
 
+
 ## Hardware Needed
 * Rasberry Pi Zero W V1.1 [https://amzn.to/2YNBUNQ](https://amzn.to/2YNBUNQ)
 * Low Voltage Labs Traffic Light [https://amzn.to/2MVWmtl](https://amzn.to/2MVWmtl)
 
 ## Soldering
-You may be able to get by without soldering, but I soldered the wires onto my board.  I did not solder into the traffic light device. I used GPIO spots GND/17/27/22 and wires that are 40mm long. You can use 14/15/18/GND too, and not have to rotate the light 180 degrees. If you change GPIO pins, you must update the `app.py` file with the new locations:
+You may be able to get by without soldering, but I soldered the wires onto my board.  I did not solder into the traffic light device. I used GPIO spots GND/17/27/22 and wires that are 40mm long. You can use 14/15/18/GND too, and you will not have to rotate the light 180 degrees. If you change GPIO pins, you must update the `app.py` file with the new locations:
 ```
-# GPIO Numbers
+# GPIO Pin Numbers
 g_io = 17
 r_io = 27
 y_io = 22
 ```
+## Skills needed
+* Familiarity with Raspberry Pi
+* SSH into a computer
+* Basic soldering
+* Basic command line experience 
+* 3D printing
 
 ## Case and Assembly
 Once soldered, put the traffic lights onto the wires.  With the lights facing towards the USB/HDMI ports, insert the wires, in sequence left to right, into the traffic light.  While slightly pushing down, twist the traffic light 180 degrees, facing away from the ports.  Next, place the PI Zero into the base of the case.  Fit the traffic light through the hole in the top/lid part of the case, and then snap the top/lid down onto the base.  Then, gently press the LEDs into the holes on the front.  Once it is securely in place, fit the back of the light tower into place to secure the traffic light in the tower.
@@ -35,7 +42,7 @@ Once soldered, put the traffic lights onto the wires.  With the lights facing to
 1. Re-insert the SDCard into your computer (where you burned the image) and browse to the /boot directory on the card
 
 1. Create an empty file called `ssh`
-1. Create a file called `wpa_supplicant.conf`
+1. Create a file called `wpa_supplicant.conf`. It should look like this:
 ```
 country=US
 update_config=1
@@ -47,9 +54,10 @@ network={
  psk="your_password"
 }
 ```
+Be sure to use your SSID (Wifi network name) and password for your network. 
 
 ## Boot the Pi
-Boot the pi with the SDCard card inside.  When it comes online, it will have SSH enabled.  If it does not connect, be sure you have the SSID and PSK correct for your wireless.  
+Now put the SDCard into the pi and turn it on. When it comes online, it will have SSH enabled.  If it does not connect, be sure you have the SSID (wireless name) and PSK (wireless password) correct.  Without HDMI and keyboard, you will have to find the device on your network. You need the IP address to log in and set it up.
 
 SSH into the machine, using `raspberry` as the default password
 ```
