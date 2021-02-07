@@ -111,7 +111,7 @@ def calculate_scheduled_light():
         elif data[green_start] < data[yellow_start] < data[red_start]:
             if now < data[green_start] or now >= data[red_start]:
                 return red
-            elif now >= data[green__start] and now < data[yellow_start]:
+            elif now >= data[green_start] and now < data[yellow_start]:
                 return green
             elif now >= data[yellow_start] and now < data[red_start]:
                 return yellow
@@ -119,7 +119,7 @@ def calculate_scheduled_light():
         elif data[green_start] < data[red_start] < data[yellow_start]:
             if now < data[green_start] or now >= data[yellow_start]:
                 return yellow
-            elif now >= data[green__start] and now < data[red_start]:
+            elif now >= data[green_start] and now < data[red_start]:
                 return green
             elif now >= data[red_start] and now < data[yellow_start]:
                 return red
