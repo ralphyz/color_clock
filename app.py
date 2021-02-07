@@ -69,7 +69,7 @@ def calculate_scheduled_light():
     dt_format = '%H:%M'
     now = time.strftime(dt_format)
 
-    if yellow_mode = 0:
+    if yellow_mode == 0:
         # yellow is always right before green
         data[yellow_start] = str(datetime.strptime(data[green_start], dt_format) - datetime.strptime(green_notice, dt_format))[:-3]
 
