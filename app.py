@@ -69,7 +69,7 @@ def calculate_scheduled_light():
     dt_format = '%H:%M'
     now = time.strftime(dt_format)
 
-    if yellow_mode == 0:
+    if data[yellow_mode] == 0:
         # yellow is always right before green
         data[yellow_start] = str(datetime.strptime(data[green_start], dt_format) - datetime.strptime(green_notice, dt_format))[:-3]
 
@@ -318,6 +318,7 @@ def schedule():
     # make sure good values were sent
     try:
         new_yellow = int(new_yellow)
+        new_mode = int(new_mode)
     except:
         return redirect(url_for(index))
 
@@ -337,8 +338,11 @@ def schedule():
         else:
             green_notice = "00:%d" % new_yellow
 
+        data[yellow_mode] = 0
+
     else:
-        pass # bkd - add scheduled yellow here
+        data[yellow_mode] = 1
+        # bkd - add scheduled yellow here
 
     # new schedule passed all the checks: set the environment, write it, then redirect the web page
     data[green_start] = new_green
