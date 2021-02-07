@@ -267,7 +267,7 @@ def web_index():
         red:data[red_start],
         green:data[green_start],
         yellow:y_m if data[yellow_mode] == 0 else data[yellow_start],
-        mode: data[yellow_mode]
+        "mode": data[yellow_mode]
     }
 
     return render_template('main.html', title=light, light=lights, time=times, clock=time.strftime("%H:%M:%S"))
