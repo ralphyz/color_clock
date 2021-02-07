@@ -476,4 +476,4 @@ if __name__ == '__main__':
     sched.add_job(activate_light, 'interval', seconds=1)
     sched.start()
 
-    app.run(use_reloader=False, debug=True, host='0.0.0.0', port=80)
+    app.run(use_reloader=False, debug=False, host='0.0.0.0', port=80)
