@@ -208,9 +208,14 @@ def web_index():
             override:False
         }
 
+    y_h, y_m = green_notice.split(":")
+
+    y_m = int(y_m)
+
     times = {
         red:data[red_start],
-        green:data[green_start]
+        green:data[green_start],
+        yellow:y_m
     }
 
     return render_template('main.html', title=light, light=lights, time=times, clock=time.strftime("%H:%M:%S"))
