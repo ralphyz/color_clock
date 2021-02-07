@@ -18,6 +18,7 @@ saved = 'saved'
 scheduled = 'scheduled'
 led_status = 'led_status'
 yellow_mode = 'yellow_mode'
+green_notice = 'green_notice'
 
 # Colors
 red = 'red'
@@ -30,13 +31,13 @@ index = "web_index"
 
 def_green_start = '07:45'
 def_red_start = '20:45'
+def_green_notice = '00:05' # minutes
 
 # GPIO Numbers
 g_io = 17
 r_io = 27
 y_io = 22
 
-green_notice = '00:05' # minutes
 data = {}
 
 #--------------------------------------------------------------------------------
@@ -71,7 +72,7 @@ def calculate_scheduled_light():
 
     if data[yellow_mode] == 0:
         # yellow is always right before green
-        data[yellow_start] = str(datetime.strptime(data[green_start], dt_format) - datetime.strptime(green_notice, dt_format))[:-3]
+        data[yellow_start] = str(datetime.strptime(data[green_start], dt_format) - datetime.strptime(data[green_notice], dt_format))[:-3]
 
         hr, m = data[yellow_start].split(delim)
         if len(hr) == 1:
@@ -206,6 +207,9 @@ def read_light_config():
     if data.get(green_start) is None:
         data[green_start] = def_green_start
 
+    if data.get(green_notice) is None:
+        data[green_notice] = def_green_notice
+
     if data.get(yellow_mode) == False:
         data[yellow_mode] = 0
     else:
@@ -256,7 +260,7 @@ def web_index():
             override:False
         }
 
-    y_h, y_m = green_notice.split(":")
+    y_h, y_m = data[green_notice].split(":")
 
     y_m = int(y_m)
 
@@ -337,7 +341,7 @@ def normal():
 #--------------------------------------------------------------------------------
 @app.route("/schedule", methods=["POST"])
 def schedule():
-    global data, green_notice
+    global data
 
 
     # get the expected parameters
@@ -389,9 +393,9 @@ def schedule():
             return redirect(url_for(index))
 
         if new_yellow < 10:
-            green_notice = "00:0%d" % new_yellow
+            data[green_notice] = "00:0%d" % new_yellow
         else:
-            green_notice = "00:%d" % new_yellow
+            data[green_notice] = "00:%d" % new_yellow
 
         data[yellow_mode] = 0
 
