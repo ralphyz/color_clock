@@ -92,7 +92,55 @@ def calculate_scheduled_light():
             else:
                 return red
     else:
-        return red # bkd need to input mode 1 logic
+        if data[red_start] < data[yellow_start] < data[green_start]:
+            if now < data[red_start] or now >= data[green_start]:
+                return green
+            elif now >= data[red_start] and now < data[yellow_start]:
+                return red
+            elif now >= data[yellow_start] and now < data[green_start]:
+                return yellow
+
+        elif data[red_start] < data[green_start] < data[yellow_start]:
+            if now < data[red_start] or now >= data[yellow_start]:
+                return yellow
+            elif now >= data[red_start] and now < data[green_start]:
+                return red
+            elif now >= data[green_start] and now < data[yellow_start]:
+                return green
+
+        elif data[green_start] < data[yellow_start] < data[red_start]:
+            if now < data[green_start] or now >= data[red_start]:
+                return red
+            elif now >= data[green__start] and now < data[yellow_start]:
+                return green
+            elif now >= data[yellow_start] and now < data[red_start]:
+                return yellow
+
+        elif data[green_start] < data[red_start] < data[yellow_start]:
+            if now < data[green_start] or now >= data[yellow_start]:
+                return yellow
+            elif now >= data[green__start] and now < data[red_start]:
+                return green
+            elif now >= data[red_start] and now < data[yellow_start]:
+                return red
+
+        elif data[yellow_start] < data[red_start] < data[green_start]:
+            if now < data[yellow_start] or now >= data[green_start]:
+                return green
+            elif now >= data[yellow_start] and now < data[red_start]:
+                return yellow
+            elif now >= data[red_start] and now < data[green_start]:
+                return red
+
+        elif data[yellow_start] < data[green_start] < data[red_start]:
+            if now < data[yellow_start] or now >= data[red_start]:
+                return red
+            elif now >= data[yellow_start] and now < data[green_start]:
+                return yellow
+            elif now >= data[green_start] and now < data[red_start]:
+                return green
+
+        return red
 
 #--------------------------------------------------------------------------------
 #
@@ -179,7 +227,7 @@ def read_light_config():
         data[saved] = ''
         data[override] = ''
 
-    #bkd I don't validate any of this data...I should
+    # bkd - all these values need validating
 
 #--------------------------------------------------------------------------------
 #
@@ -200,7 +248,7 @@ def web_index():
         lights = {
             red:red if data[override] == red else gray,
             green:green if data[override]  == green else gray,
-            yellow:yellow if data[override ]== yellow else gray,
+            yellow:yellow if data[override] == yellow else gray,
             override:True
         }
     else:
@@ -218,7 +266,8 @@ def web_index():
     times = {
         red:data[red_start],
         green:data[green_start],
-        yellow:y_m
+        yellow:y_m if data[yellow_mode] == 0 else data[yellow_start],
+        mode: data[yellow_mode]
     }
 
     return render_template('main.html', title=light, light=lights, time=times, clock=time.strftime("%H:%M:%S"))
@@ -306,6 +355,16 @@ def schedule():
 
     # make sure good values were sent
     try:
+        new_mode = int(new_mode)
+    except:
+        return redirect(url_for(index))
+
+    # make sure good values were sent
+    if new_mode != 0 and new_mode != 1:
+        return redirect(url_for(index))
+
+    # make sure good values were sent
+    try:
         g_h, g_m = new_green.split(delim)
         r_h, r_m = new_red.split(delim)
     except:
@@ -316,18 +375,16 @@ def schedule():
         return redirect(url_for(index))
 
     # make sure good values were sent
-    try:
-        new_yellow = int(new_yellow)
-        new_mode = int(new_mode)
-    except:
-        return redirect(url_for(index))
-
-    # make sure good values were sent
-    if new_mode != 0 and new_mode != 1:
+    if new_green == new_red or new_green ==  new_yellow or new_red == new_yellow:
         return redirect(url_for(index))
 
     # make sure good values were sent
     if new_mode == 0:
+        try:
+            new_yellow = int(new_yellow)
+        except:
+            return redirect(url_for(index))
+
         if (new_yellow % 5) != 0:
             return redirect(url_for(index))
         if new_yellow < 0 or new_yellow > 60:
@@ -341,8 +398,17 @@ def schedule():
         data[yellow_mode] = 0
 
     else:
+        try:
+            y_h, y_m = new_yellow.split(delim)
+        except:
+            return redirect(url_for(index))
+
+        # make sure good values were sent
+        if int(y_h) < 0 and int(y_h) > 24 and int(y_m) < 0 and int(y_m) > 59:
+            return redirect(url_for(index))
+
         data[yellow_mode] = 1
-        # bkd - add scheduled yellow here
+        data[yellow_start] = new_yellow
 
     # new schedule passed all the checks: set the environment, write it, then redirect the web page
     data[green_start] = new_green

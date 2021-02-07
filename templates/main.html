@@ -14,6 +14,26 @@
 	          $('.standard').clockTimePicker({precision:5});
               $( "#tabs" ).tabs();
 
+              $( "#switch1" ).click( function( event ) {
+                  event.preventDefault();
+                  $('[href="#tabs-schedule2"]').closest('li').show();
+                  $('[href="#tabs-schedule1"]').closest('li').hide();
+                  $( "#tabs" ).tabs({ active: 3});
+              });
+              $( "#switch2" ).click( function( event ) {
+                  event.preventDefault();
+                  $('[href="#tabs-schedule1"]').closest('li').show();
+                  $('[href="#tabs-schedule2"]').closest('li').hide();
+                  $( "#tabs" ).tabs({ active: 2});
+              });
+
+          {% if time.mode == 0 %}
+              $('[href="#tabs-schedule2"]').closest('li').hide();
+          {% else %}
+              $('[href="#tabs-schedule1"]').closest('li').hide();
+          {% endif %}
+
+
               $("#checkbox-1").checkboxradio({icon: false});
               $('#checkbox-1').on("change", function(event){
                   if( $('#checkbox-1').prop("checked")){
@@ -32,10 +52,11 @@
     <body>
         <div id="tabs" class="tabs" align=center>
             <ul>
-                <li><a href="#tabs-1">Lights</a></li>
-                <li><a href="#tabs-2">Schedule</a></li>
+                <li><a href="#tabs-lights">Lights</a></li>
+                <li><a href="#tabs-schedule1">Schedule</a></li>
+                <li><a href="#tabs-schedule2">Schedule</a></li>
             </ul>
-            <div id="tabs-1" class="tabs2" align=center>
+            <div id="tabs-lights" class="tabs2" align=center>
                 <p>
                     <table id="tab_table" align=center>
                         <tr><td>
@@ -77,9 +98,9 @@
                     </table>
                 </p>
             </div>
-            <div id="tabs-2" class="tabs">
+            <div id="tabs-schedule1" class="tabs">
                 <p>
-                    <form class="pure-form" id="schedule" action="/schedule" method="POST">
+                    <form class="pure-form" id="schedule1" action="/schedule" method="POST">
                         <table class="pure-table pure-table-bordered">
                             <tr><td><p>Green on at </p></td><td><input id="green" name="green" class="time standard" type="text" value="{{ time.green }}" /></td></tr>
                             <tr><td><p>Red on at </p></td><td><input id="red" name="red" class="time standard" type="text" value="{{ time.red }}" /></td></tr>
@@ -97,8 +118,21 @@
                             <tr><td colspan=2><div class="widget" align="center"><input type="submit" value="save"></div></td></tr>
                         </table>
                         <input type="hidden" name="yellow_mode" value="0">
+                        <button id="switch1" class="ui-button ui-widget ui-corner-all">Switch</button>
                     </form>
               </p>
+            </div>
+            <div id="tabs-schedule2" class="tabs">
+                    <form class="pure-form" id="schedule2" action="/schedule" method="POST">
+                        <table class="pure-table pure-table-bordered">
+                            <tr><td><p>Green on at </p></td><td><input id="green" name="green" class="time standard" type="text" value="{{ time.green }}" /></td></tr>
+                            <tr><td><p>Red on at </p></td><td><input id="red" name="red" class="time standard" type="text" value="{{ time.red }}" /></td></tr>
+                            <tr><td><p>Yellow on at </p></td><td><input id="red" name="yellow" class="time standard" type="text" value="{{ time.yellow }}" /></td></tr>
+                            <tr><td colspan=2><div class="widget" align="center"><input type="submit" value="save"></div></td></tr>
+                        </table>
+                        <input type="hidden" name="yellow_mode" value="1">
+                        <button id="switch2" class="ui-button ui-widget ui-corner-all">Switch</button>
+                    </form>
             </div>
       </div>
       <br>
