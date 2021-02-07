@@ -182,7 +182,6 @@ def create_time_config():
 def write_time_config():
     global data
 
-    print(data)
     with open(config_file, 'w') as f:
         json.dump(data, f)
 
@@ -241,8 +240,6 @@ def web_index():
     read_light_config()
 
     light = calculate_scheduled_light()
-
-    print(data)
 
     if data[override]:
         lights = {
