@@ -84,7 +84,7 @@
                             <tr><td><p>Green on at </p></td><td><input id="green" name="green" class="time standard" type="text" value="{{ time.green }}" /></td></tr>
                             <tr><td><p>Red on at </p></td><td><input id="red" name="red" class="time standard" type="text" value="{{ time.red }}" /></td></tr>
                             <tr><td colspan=2 align=center>
-                                <p>Yellow <select name="y_time" id="y_time">
+                                <p>Yellow <select name="yellow" id="y_time">
                                     {% for number in range(1,13) %}
                                     {% if time.yellow = number * 5}
                                         <option value="{{ number * 5 }}" selected>{{ number * 5 }}</option>
@@ -96,6 +96,7 @@
                             </td></tr>
                             <tr><td colspan=2><div class="widget" align="center"><input type="submit" value="save"></div></td></tr>
                         </table>
+                        <input type="hidden" name="yellow_mode" value="0">
                     </form>
               </p>
             </div>

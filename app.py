@@ -69,27 +69,30 @@ def calculate_scheduled_light():
     dt_format = '%H:%M'
     now = time.strftime(dt_format)
 
-    # yellow is always right before green
-    data[yellow_start] = str(datetime.strptime(data[green_start], dt_format) - datetime.strptime(green_notice, dt_format))[:-3]
+    if yellow_mode = 0:
+        # yellow is always right before green
+        data[yellow_start] = str(datetime.strptime(data[green_start], dt_format) - datetime.strptime(green_notice, dt_format))[:-3]
 
-    hr, m = data[yellow_start].split(delim)
-    if len(hr) == 1:
-        data[yellow_start] = "0%s" % data[yellow_start]
+        hr, m = data[yellow_start].split(delim)
+        if len(hr) == 1:
+            data[yellow_start] = "0%s" % data[yellow_start]
 
-    if data[red_start] > data[green_start]:
-        if data[red_start] <= now or now < data[yellow_start]:
-            return red
-        elif now >= data[yellow_start] and now < data[green_start]:
-            return yellow
+        if data[red_start] > data[green_start]:
+            if data[red_start] <= now or now < data[yellow_start]:
+                return red
+            elif now >= data[yellow_start] and now < data[green_start]:
+                return yellow
+            else:
+                return green
         else:
-            return green
+            if now >= data[yellow_start] and now < data[green_start]:
+                return yellow
+            elif now < data[red_start] or now >= data[green_start]:
+                return green
+            else:
+                return red
     else:
-        if now >= data[yellow_start] and now < data[green_start]:
-            return yellow
-        elif now < data[red_start] or now >= data[green_start]:
-            return green
-        else:
-            return red
+        return red # bkd need to input mode 1 logic
 
 #--------------------------------------------------------------------------------
 #
@@ -287,15 +290,18 @@ def normal():
 #--------------------------------------------------------------------------------
 @app.route("/schedule", methods=["POST"])
 def schedule():
-    global data
+    global data, green_notice
+
 
     # get the expected parameters
     if request.method == 'POST':
         new_green = request.form[green]
         new_red = request.form[red]
+        new_yellow = request.form[yellow]
+        new_mode = request.form[yellow_mode]
 
     # make sure good values were sent
-    if not new_green or not new_red:
+    if not new_green or not new_red or not new_yellow or not new_mode:
         return redirect(url_for(index))
 
     # make sure good values were sent
@@ -308,6 +314,31 @@ def schedule():
     # make sure good values were sent
     if int(g_h) < 0 and int(g_h) > 24 and int(g_m) < 0 and int(g_m) > 59 and int(r_h) < 0 and int(r_h) > 24 and int(r_m) < 0 and int(r_m) > 59:
         return redirect(url_for(index))
+
+    # make sure good values were sent
+    try:
+        new_yellow = int(new_yellow)
+    except:
+        return redirect(url_for(index))
+
+    # make sure good values were sent
+    if new_mode != 0 and new_mode != 1:
+        return redirect(url_for(index))
+
+    # make sure good values were sent
+    if new_mode == 0:
+        if (new_yellow % 5) != 0:
+            return redirect(url_for(index))
+        if new_yellow < 0 or new_yellow > 60:
+            return redirect(url_for(index))
+
+        if new_yellow < 10:
+            green_notice = "00:0%d" % new_yellow
+        else:
+            green_notice = "00:%d" % new_yellow
+
+    else:
+        pass # bkd - add scheduled yellow here
 
     # new schedule passed all the checks: set the environment, write it, then redirect the web page
     data[green_start] = new_green
