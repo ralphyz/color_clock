@@ -27,7 +27,7 @@
                   $( "#tabs" ).tabs({ active: 1});
               });
 
-          {% if time.mode == 0 %}
+          {% if time.yellow_mode == 0 %}
               $('[href="#tabs-schedule2"]').closest('li').hide();
           {% else %}
               $('[href="#tabs-schedule1"]').closest('li').hide();
@@ -107,7 +107,7 @@
                             <tr><td colspan=2 align=center>
                                 <p>Yellow <select name="yellow" id="yellow">
                                     {% for number in range(1,13) %}
-                                    {% if time.yellow == number * 5 %}
+                                    {% if time.green_notice == number * 5 %}
                                         <option value="{{ number * 5 }}" selected>{{ number * 5 }}</option>
                                     {% else %}
                                         <option value="{{ number * 5 }}">{{ number * 5 }}</option>
