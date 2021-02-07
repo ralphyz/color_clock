@@ -160,11 +160,11 @@ def read_light_config():
         data[green_start] = def_green_start
 
     if data.get(yellow_mode) == False:
-        data[yellow_mode] = ''
+        data[yellow_mode] = 0
     else:
         if data.get(yellow_mode) is None:
             data[yellow_start] = ''
-            data[yellow_mode] = False
+            data[yellow_mode] = 0
 
     if data.get(override) is None:
         data[override] = ''
