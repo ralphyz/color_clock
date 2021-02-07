@@ -15,6 +15,7 @@ It has a simple design and a customizable schedule that can be programmed from t
 ## Hardware Needed
 * Rasberry Pi Zero W V1.1 [https://amzn.to/2YNBUNQ](https://amzn.to/2YNBUNQ)
 * Low Voltage Labs Traffic Light [https://amzn.to/2MVWmtl](https://amzn.to/2MVWmtl)
+* Micro SDCard [https://amzn.to/3rnInvc](https://amzn.to/3rnInvc)
 
 ## Soldering
 You may be able to get by without soldering, but I soldered the wires onto my board.  I did not solder into the traffic light device. I used GPIO spots GND/17/27/22 and wires that are 40mm long. You can use 14/15/18/GND too, and you will not have to rotate the light 180 degrees. If you change GPIO pins, you must update the `app.py` file with the new locations:
