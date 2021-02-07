@@ -18,13 +18,13 @@
                   event.preventDefault();
                   $('[href="#tabs-schedule2"]').closest('li').show();
                   $('[href="#tabs-schedule1"]').closest('li').hide();
-                  $( "#tabs" ).tabs({ active: 3});
+                  $( "#tabs" ).tabs({ active: 2});
               });
               $( "#switch2" ).click( function( event ) {
                   event.preventDefault();
                   $('[href="#tabs-schedule1"]').closest('li').show();
                   $('[href="#tabs-schedule2"]').closest('li').hide();
-                  $( "#tabs" ).tabs({ active: 2});
+                  $( "#tabs" ).tabs({ active: 1});
               });
 
           {% if time.mode == 0 %}
@@ -123,6 +123,7 @@
               </p>
             </div>
             <div id="tabs-schedule2" class="tabs">
+                <p>
                     <form class="pure-form" id="schedule2" action="/schedule" method="POST">
                         <table class="pure-table pure-table-bordered">
                             <tr><td><p>Green on at </p></td><td><input id="green" name="green" class="time standard" type="text" value="{{ time.green }}" /></td></tr>
@@ -133,6 +134,7 @@
                         <input type="hidden" name="yellow_mode" value="1">
                         <button id="switch2" class="ui-button ui-widget ui-corner-all">Switch</button>
                     </form>
+                </p>
             </div>
       </div>
       <br>
