@@ -2,8 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for
 import sys, json, time, datetime
 from datetime import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
-from watchdog.observers import Observer
-from watchdog.events import PatternMatchingEventHandler
+#from watchdog.observers import Observer
+#from watchdog.events import PatternMatchingEventHandler
 import RPi.GPIO as GPIO
 
 app = Flask(__name__)
