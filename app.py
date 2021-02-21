@@ -70,6 +70,8 @@ def calculate_scheduled_light():
     dt_format = '%H:%M'
     now = time.strftime(dt_format)
 
+    return_val = red
+
     if data[yellow_mode] == 0:
         # yellow is always right before green
         data[yellow_start] = str(datetime.strptime(data[green_start], dt_format) - datetime.strptime(data[green_notice], dt_format))[:-3]
@@ -113,9 +115,9 @@ def calculate_scheduled_light():
             if now < data[green_start] or now >= data[red_start]:
                 return red
             elif now >= data[green_start] and now < data[yellow_start]:
-                return green
+                 return reen
             elif now >= data[yellow_start] and now < data[red_start]:
-                return yellow
+                 return yellow
 
         elif data[green_start] < data[red_start] < data[yellow_start]:
             if now < data[green_start] or now >= data[yellow_start]:
@@ -129,7 +131,7 @@ def calculate_scheduled_light():
             if now < data[yellow_start] or now >= data[green_start]:
                 return green
             elif now >= data[yellow_start] and now < data[red_start]:
-                return yellow
+                 return yellow
             elif now >= data[red_start] and now < data[green_start]:
                 return red
 
@@ -436,6 +438,11 @@ def activate_light():
     led = ''
     d[scheduled] = calculate_scheduled_light()
 
+    if d[scheduled] != d[saved]:
+        d[override] = ''
+        d[saved] = ''
+        write_time_config()
+
     if d[override]:
         led = d[override]
     else:
@@ -470,10 +477,10 @@ if __name__ == '__main__':
     GPIO.setup(r_io, GPIO.OUT)
     GPIO.setup(y_io, GPIO.OUT)
 
-    event_handler = Handler()
-    observer = Observer()
-    observer.schedule(event_handler, path=src_path, recursive=True)
-    observer.start()
+#    event_handler = Handler()
+#    observer = Observer()
+#    observer.schedule(event_handler, path=src_path, recursive=True)
+#    observer.start()
 
     read_light_config()
 
