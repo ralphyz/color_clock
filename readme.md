@@ -87,9 +87,10 @@ pip -r install requirements.txt
 
 Schedule the program to run when the unit is rebooted:
 ```
+crontab -l > mycron && echo "@reboot /usr/bin/python3 /home/pi/color_clock/monitor.py 2>/dev/null" >> mycron && crontab mycron && rm mycron
 crontab -l > mycron && echo "@reboot /usr/bin/python3 /home/pi/color_clock/app.py 2>/dev/null" >> mycron && crontab mycron && rm mycron
 ```
-Reboot to start the clock!
+Reboot to start the color clock!
 ```
 sudo reboot
 ```
@@ -101,5 +102,5 @@ You may also select the Schedule Tab, and set the schedule for the light changes
 
 
 ## Conclusion
-I hope this small project helps someone else.  It was fun to write, and fun to see my daughter use.
+I hope this small project helps someone else.  It was fun to write, and fun to see my daughter use. Also, please change your pi's password.  
 

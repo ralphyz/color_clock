@@ -27,7 +27,7 @@
                   $( "#tabs" ).tabs({ active: 1});
               });
 
-          {% if time.yellow_mode == 0 %}
+          {% if time.mode == 0 %}
               $('[href="#tabs-schedule2"]').closest('li').hide();
           {% else %}
               $('[href="#tabs-schedule1"]').closest('li').hide();
@@ -128,7 +128,7 @@
                                 </td>
                             </tr>
                         </table>
-                        <input type="hidden" name="yellow_mode" value="0">
+                        <input type="hidden" name="mode" value="0">
                     </form>
               </p>
             </div>
@@ -152,7 +152,7 @@
                                 </td>
                             </tr>
                         </table>
-                        <input type="hidden" name="yellow_mode" value="1">
+                        <input type="hidden" name="mode" value="1">
                     </form>
                 </p>
             </div>

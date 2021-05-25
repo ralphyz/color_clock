@@ -1,22 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sys, json, time, datetime
 from datetime import datetime
-from apscheduler.schedulers.background import BackgroundScheduler
-#from watchdog.observers import Observer
-#from watchdog.events import PatternMatchingEventHandler
+
 import RPi.GPIO as GPIO
 
 app = Flask(__name__)
 
 # Global variables
 config_file = 'config.json'
+web_file = 'web.json'
 red_start = 'red_start'
 green_start = 'green_start'
 yellow_start = 'yellow_start'
+next_led = 'next'
 override = 'override'
-saved = 'saved'
-scheduled = 'scheduled'
-led_status = 'led_status'
+override_time = 'override_start'
+active = 'active'
+
+mode = 'mode'
 yellow_mode = 'yellow_mode'
 green_notice = 'green_notice'
 
@@ -26,137 +27,14 @@ green = 'green'
 yellow = 'yellow'
 gray = 'gray'
 led = 'led'
-delim = ':'
+delimiter = ':'
 index = "web_index"
 
 def_green_start = '07:45'
 def_red_start = '20:45'
-def_green_notice = '00:05' # minutes
-
-# GPIO Numbers
-g_io = 17
-r_io = 27
-y_io = 22
+def_yellow_start = '07:40'
 
 data = {}
-
-#--------------------------------------------------------------------------------
-#
-#  name: Handler
-#  desc: define the pattern for the config file
-#
-#--------------------------------------------------------------------------------
-class Handler(PatternMatchingEventHandler):
-    def __init__(self):
-        # Set the patterns for PatternMatchingEventHandler
-        PatternMatchingEventHandler.__init__(self, patterns=[config_file], ignore_directories=True, case_sensitive=False)
-    # Event is created, you can process it now
-    def on_created(self, event):
-        activate_light()
-
-    # Event is modified, you can process it now
-    def on_modified(self, event):
-        activate_light()
-
-#--------------------------------------------------------------------------------
-#
-#  name: calculate_scheduled_light
-#  desc: determine which light should be active
-#
-#--------------------------------------------------------------------------------
-def calculate_scheduled_light():
-    global data
-
-    dt_format = '%H:%M'
-    now = time.strftime(dt_format)
-
-    return_val = red
-
-    if data[yellow_mode] == 0:
-        # yellow is always right before green
-        data[yellow_start] = str(datetime.strptime(data[green_start], dt_format) - datetime.strptime(data[green_notice], dt_format))[:-3]
-
-        hr, m = data[yellow_start].split(delim)
-        if len(hr) == 1:
-            data[yellow_start] = "0%s" % data[yellow_start]
-
-        if data[red_start] > data[green_start]:
-            if data[red_start] <= now or now < data[yellow_start]:
-                return red
-            elif now >= data[yellow_start] and now < data[green_start]:
-                return yellow
-            else:
-                return green
-        else:
-            if now >= data[yellow_start] and now < data[green_start]:
-                return yellow
-            elif now < data[red_start] or now >= data[green_start]:
-                return green
-            else:
-                return red
-    else:
-        if data[red_start] < data[yellow_start] < data[green_start]:
-            if now < data[red_start] or now >= data[green_start]:
-                return green
-            elif now >= data[red_start] and now < data[yellow_start]:
-                return red
-            elif now >= data[yellow_start] and now < data[green_start]:
-                return yellow
-
-        elif data[red_start] < data[green_start] < data[yellow_start]:
-            if now < data[red_start] or now >= data[yellow_start]:
-                return yellow
-            elif now >= data[red_start] and now < data[green_start]:
-                return red
-            elif now >= data[green_start] and now < data[yellow_start]:
-                return green
-
-        elif data[green_start] < data[yellow_start] < data[red_start]:
-            if now < data[green_start] or now >= data[red_start]:
-                return red
-            elif now >= data[green_start] and now < data[yellow_start]:
-                 return reen
-            elif now >= data[yellow_start] and now < data[red_start]:
-                 return yellow
-
-        elif data[green_start] < data[red_start] < data[yellow_start]:
-            if now < data[green_start] or now >= data[yellow_start]:
-                return yellow
-            elif now >= data[green_start] and now < data[red_start]:
-                return green
-            elif now >= data[red_start] and now < data[yellow_start]:
-                return red
-
-        elif data[yellow_start] < data[red_start] < data[green_start]:
-            if now < data[yellow_start] or now >= data[green_start]:
-                return green
-            elif now >= data[yellow_start] and now < data[red_start]:
-                 return yellow
-            elif now >= data[red_start] and now < data[green_start]:
-                return red
-
-        elif data[yellow_start] < data[green_start] < data[red_start]:
-            if now < data[yellow_start] or now >= data[red_start]:
-                return red
-            elif now >= data[yellow_start] and now < data[green_start]:
-                return yellow
-            elif now >= data[green_start] and now < data[red_start]:
-                return green
-
-        return red
-
-#--------------------------------------------------------------------------------
-#
-#  name: get_current_light
-#  desc: determine which light should be active
-#
-#--------------------------------------------------------------------------------
-def get_current_light():
-    global data
-
-    read_light_config()
-
-    return data[override] if data[override] else data[scheduled]
 
 #--------------------------------------------------------------------------------
 #
@@ -170,7 +48,11 @@ def create_time_config():
     data = {
         red_start: def_red_start,
         green_start: def_green_start,
+        yellow_start: def_yellow_start,
+        next_led: '',
         override: '',
+        override_time: '',
+        active: ''
     }
 
     with open(config_file, 'w') as outfile:
@@ -185,7 +67,7 @@ def create_time_config():
 def write_time_config():
     global data
 
-    with open(config_file, 'w') as f:
+    with open(web_file, 'w') as f:
         json.dump(data, f)
 
 #--------------------------------------------------------------------------------
@@ -209,31 +91,32 @@ def read_light_config():
     if data.get(green_start) is None:
         data[green_start] = def_green_start
 
-    if data.get(green_notice) is None:
-        data[green_notice] = def_green_notice
-
-    if data.get(yellow_mode) == False:
-        data[yellow_mode] = 0
-    else:
-        if data.get(yellow_mode) is None:
-            data[yellow_start] = ''
-            data[yellow_mode] = 0
-
-    if data.get(override) is None:
+    if data.get(override_time) is None:
+        data[override_time] = ''
+        data[override] = ''
+    elif data.get(override) is None:
+        data[override_time] = ''
         data[override] = ''
 
-    if data.get(saved) is None:
-        data[saved] = calculate_scheduled_light()
+    if data.get(yellow_mode) is None:
+        data[yellow_mode] = False
+    print(data[yellow_mode])
 
-    #don't take the file value
-    data[scheduled] = calculate_scheduled_light()
+    if data.get(active) is None:
+        data[active] = green
 
-    if data[saved] != data[scheduled]:
-        data[saved] = ''
-        data[override] = ''
+    try:
+        g_h, g_m = data[green_start].split(delimiter)
+        y_h, y_m = data[yellow_start].split(delimiter)
+        r_h, r_m = data[red_start].split(delimiter)
+    except:
+        create_time_config
 
-    # bkd - all these values need validating
+    # make sure good values were sent
+    if int(g_h) < 0 and int(g_h) > 24 and int(g_m) < 0 and int(g_m) > 59 and int(r_h) < 0 and int(r_h) > 24 and int(r_m) < 0 and int(r_m) > 59:
+        create_time_config
 
+ 
 #--------------------------------------------------------------------------------
 #
 #  name: web_index
@@ -245,33 +128,32 @@ def web_index():
     global data
     read_light_config()
 
-    light = calculate_scheduled_light()
+    light = data[active]
 
     if data[override]:
-        lights = {
-            red:red if data[override] == red else gray,
-            green:green if data[override]  == green else gray,
-            yellow:yellow if data[override] == yellow else gray,
-            override:True
-        }
+        light = data[override]
+
+    lights = {
+        red:red if light == red else gray,
+        green: green if light == green else gray,
+        yellow: yellow if light == yellow else gray,
+        override:True if data[override] else False
+    }
+
+    y_h, y_m = data[yellow_start].split(":")
+    g_h, g_m = data[green_start].split(":")
+
+    if int(g_m) > int(y_m):
+        y_m = int(g_m) - int(y_m)
     else:
-        lights = {
-            red:red if light == red else gray,
-            green:green if  light == green else gray,
-            yellow:yellow if light == yellow else gray,
-            override:False
-        }
-
-    y_h, y_m = data[green_notice].split(":")
-
-    y_m = int(y_m)
-
+        y_m = (int(g_m) - int(y_m)) * -1
+        
     times = {
         red:data[red_start],
         green:data[green_start],
         green_notice:y_m,
         yellow: data[yellow_start],
-        yellow_mode: int(data[yellow_mode])
+        mode: int(data[yellow_mode])
     }
 
     return render_template('main.html', title=light, light=lights, time=times, clock=time.strftime("%H:%M:%S"))
@@ -290,32 +172,13 @@ def change_web_led():
     read_light_config()
 
     new_led = request.args.get(led)
-
-    # was the scheduled value submitted?
-    if new_led == data[scheduled]:
-        data[override] = ""
-        data[saved] = ""
-
-        # writing the config will trigger the watchdog to update the LED
-        write_time_config()
-
-        return redirect(url_for(index))
-
-    # continue if the scheduled value was not submitted
-
-    if new_led == red:
-        data[override] = red
-    elif new_led == green:
-        data[override] = green
-    elif new_led == yellow:
-        data[override] = yellow
-
-    # save the scheduled value
-    data[saved] = data[scheduled]
-
+    print(new_led)
+    data[override] = new_led
+    data[override_time] = datetime.now().strftime('%H:%M')
+    
     # writing the config will trigger the watchdog to update the LED
     write_time_config()
-
+    time.sleep(0.2)
     return redirect(url_for(index))
 
 #--------------------------------------------------------------------------------
@@ -351,7 +214,7 @@ def schedule():
         new_green = request.form[green]
         new_red = request.form[red]
         new_yellow = request.form[yellow]
-        new_mode = request.form[yellow_mode]
+        new_mode = request.form[mode]
 
     # make sure good values were sent
     if not new_green or not new_red or not new_yellow or not new_mode:
@@ -369,8 +232,8 @@ def schedule():
 
     # make sure good values were sent
     try:
-        g_h, g_m = new_green.split(delim)
-        r_h, r_m = new_red.split(delim)
+        g_h, g_m = new_green.split(delimiter)
+        r_h, r_m = new_red.split(delimiter)
     except:
         return redirect(url_for(index))
 
@@ -391,19 +254,38 @@ def schedule():
 
         if (new_yellow % 5) != 0:
             return redirect(url_for(index))
+
         if new_yellow < 0 or new_yellow > 60:
             return redirect(url_for(index))
 
-        if new_yellow < 10:
-            data[green_notice] = "00:0%d" % new_yellow
+        y_h, y_m = map(int, new_green.split(delimiter))
+
+        y_m -= new_yellow
+
+        if y_m < 0:
+            y_h -= 1
+            y_m += 60
+
+        if y_h < 0:
+            y_h += 24
+
+        if y_m < 10:
+            y_m = '0%d' % y_m
         else:
-            data[green_notice] = "00:%d" % new_yellow
+            y_m = '%d' % y_m
+
+        if y_h < 10:
+            y_h = '0%d' % y_h
+        else:
+            y_h = '%d' % y_h
+
+        data[yellow_start] = '%s:%s' % (y_h, y_m)
 
         data[yellow_mode] = 0
 
     else:
         try:
-            y_h, y_m = new_yellow.split(delim)
+            y_h, y_m = new_yellow.split(delimiter)
         except:
             return redirect(url_for(index))
 
@@ -417,51 +299,14 @@ def schedule():
     # new schedule passed all the checks: set the environment, write it, then redirect the web page
     data[green_start] = new_green
     data[red_start] = new_red
-    data[saved] = ''
     data[override] = ''
+    data[override_time] = ''
 
     # writing the config will trigger the watchdog to update the LED
     write_time_config()
 
     return redirect(url_for(index))
 
-#--------------------------------------------------------------------------------
-#
-#  name: activate_light
-#  desc: enable the correct light
-#
-#--------------------------------------------------------------------------------
-def activate_light():
-    with open(config_file, 'r') as f:
-        d = json.load(f)
-
-    led = ''
-    d[scheduled] = calculate_scheduled_light()
-
-    if d[scheduled] != d[saved]:
-        d[override] = ''
-        d[saved] = ''
-        write_time_config()
-
-    if d[override]:
-        led = d[override]
-    else:
-        led = d[scheduled]
-
-    if led == green:
-        GPIO.output(g_io, True)
-        GPIO.output(r_io, False)
-        GPIO.output(y_io, False)
-
-    elif led == red:
-        GPIO.output(r_io, True)
-        GPIO.output(g_io, False)
-        GPIO.output(y_io, False)
-
-    elif led == yellow:
-        GPIO.output(y_io, True)
-        GPIO.output(r_io, False)
-        GPIO.output(g_io, False)
 
 #--------------------------------------------------------------------------------
 #
@@ -471,21 +316,6 @@ def activate_light():
 #--------------------------------------------------------------------------------
 if __name__ == '__main__':
     src_path = "."
+    time.sleep(5)
 
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(g_io, GPIO.OUT)
-    GPIO.setup(r_io, GPIO.OUT)
-    GPIO.setup(y_io, GPIO.OUT)
-
-#    event_handler = Handler()
-#    observer = Observer()
-#    observer.schedule(event_handler, path=src_path, recursive=True)
-#    observer.start()
-
-    read_light_config()
-
-    sched = BackgroundScheduler(daemon=True)
-    sched.add_job(activate_light, 'interval', seconds=1)
-    sched.start()
-
-    app.run(use_reloader=False, debug=False, host='0.0.0.0', port=80)
+    app.run(debug=True, host='0.0.0.0', port=80)
